@@ -1,3 +1,5 @@
+# ver 1.0.1
+
 import os
 import random
 import sqlite3
@@ -9,6 +11,10 @@ import xlrd
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtWidgets import QMessageBox
 
+illegal_char_list = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+                     'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+                     ',','.','!','@','#','$','%','^','&',' ','(',')','1','2','3','4','5','6','7','8','9','0','+','-','*','/']
+                     
 
 def get_students_list():
     data = xlrd.open_workbook("students.xlsx")
@@ -29,6 +35,15 @@ def mixstudents(li):
         random.shuffle(li)
     print('完成')
 
+
+def name_process(name):
+    p_name = ''
+    for c in name:
+        if c not in illegal_char_list:
+            p_name += c
+    
+    return p_name
+        
 
 class Wills:
     wills = defaultdict(list)
@@ -64,7 +79,9 @@ class Wills:
                 names[i] = str(int(n))
 
         for row in range(0, len(names)):
-            if self.wills[names[row]] == [] and dates[row] == date and names[row] in self.students:
+            if dates[row] == date and names[row] in self.students:
+                if self.wills[names[row]] != []：
+                    self.wills[names[row]] = []
                 self.wills[names[row]].append(first[row])
                 self.wills[names[row]].append(second[row])
                 self.wills[names[row]].append(third[row])
@@ -90,7 +107,10 @@ if __name__ == '__main__': #主程序
     #获取前一天抽到的人，放进另一个list里，和其余同学的list分别打乱并重组。
     del_names = del_names.fetchall()
     del_names = del_names[::-1]
-    date0 = del_names[0][1]
+    if len(del_names) != 0:
+        date0 = del_names[0][1]
+    else:
+        date0 = '0.00'
     all_names = get_students_list()
     student_list = []
     student_list_2 = []
@@ -155,6 +175,3 @@ if __name__ == '__main__': #主程序
                     conn.commit()
                 except Exception:
                     print(f'数据插入失败：{name} {date}')
-
-    #我居然没忘记关游标
-    conn.close()
