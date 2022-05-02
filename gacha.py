@@ -125,10 +125,10 @@ def main():
 
     # 生成一个结果字符串
     luckers = ""
-    for key in lucky:
-        luckers += f"分到{key}的学生有：\n{lucky[key]}，共{len(lucky[key])}人\n\n"
-    for key in w.foods:
-        luckers += f"{key}剩余：{w.foods[key]}份\n"
+    for k, v in lucky.items():
+        luckers += f"分到{k}的学生有：\n{v}，共{len(v)}人\n\n"
+    for k, v in w.foods.items():
+        luckers += f"{k}剩余：{v}份\n"
 
     yes = QMessageBox.question(
         wid,
