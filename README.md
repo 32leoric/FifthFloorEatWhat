@@ -1,4 +1,9 @@
 # 五楼今天吃什么
+
+[![GitHub license](https://img.shields.io/github/license/32yy/FifthFloorEatWhat)](LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/32yy/FifthFloorEatWhat)](../../commits)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 获取数据然后抽学生午餐
 
 db里记录每天抽到的学生名单，每次抽取会把前一天抽到过的学生打乱后放在抽取名单最后，也就是说会优先抽取前一天没有抽到的同学。

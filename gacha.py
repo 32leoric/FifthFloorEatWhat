@@ -1,24 +1,28 @@
-# ver 1.0.1
+"""
+    Author: 32yy, CCXXXI
+    License: MIT
+    Version: 1.1.0
+    Description: ECNU 中北五舍五楼餐券抽取脚本
+"""
 
-import os
-import random
+import logging
 import sqlite3
 import sys
-import time
 from collections import defaultdict
+from random import shuffle
 
 import xlrd
-from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget
 
-illegal_char_list = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
-                     'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-                     ',','.','!','@','#','$','%','^','&',' ','(',')','1','2','3','4','5','6','7','8','9','0','+','-','*','/']
-                     
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
 
 def get_students_list():
     data = xlrd.open_workbook("students.xlsx")
-    table = data.sheet_by_name('Sheet1')
+    table = data.sheet_by_name("Sheet1")
     names = table.col_values(0)
     for i, name in enumerate(names):
         if type(name) == float:
@@ -27,46 +31,22 @@ def get_students_list():
     return names
 
 
-def mixstudents(li):
-    print('正在打乱学生名单', end='')
-    for i in range(100000):
-        if i % 10000 == 0:
-            print('○', end='')
-        random.shuffle(li)
-    print('完成')
-
-
-def name_process(name):
-    p_name = ''
-    for c in name:
-        if c not in illegal_char_list:
-            p_name += c
-    
-    return p_name
-        
-
 class Wills:
-    wills = defaultdict(list)
-    food = defaultdict(int)
-    students = []
-
     def __init__(self):
-        pass
+        self.wills = defaultdict(list)
+        self.foods = defaultdict(int)
+        self.students = []
 
     def get_students(self, li, li2):
-        for s in li:
-            self.students.append(s)
-        for s in li2:
-            self.students.append(s)
+        self.students = li + li2
 
-    def get_foods(self, types, nums):
-        for i in range(len(types)):
-            self.food[types[i]] = nums[i]
+    def get_foods(self, foods: dict):
+        self.foods |= foods
 
-    #获得志愿时，检查日期，学生是否在学生列表，以及是否多次填写。杜绝了多次填写，改名等手段
+    # 获得志愿时，检查日期，学生是否在学生列表，以及是否多次填写。杜绝了多次填写，改名等手段
     def get_wills(self, date):
         data = xlrd.open_workbook("food.xlsx")
-        table = data.sheet_by_name('Sheet1')
+        table = data.sheet_by_name("Sheet1")
 
         dates = table.col_values(6)
         names = table.col_values(7)
@@ -80,37 +60,36 @@ class Wills:
 
         for row in range(0, len(names)):
             if dates[row] == date and names[row] in self.students:
-                if self.wills[names[row]] != []：
+                if self.wills[names[row]]:
                     self.wills[names[row]] = []
                 self.wills[names[row]].append(first[row])
                 self.wills[names[row]].append(second[row])
                 self.wills[names[row]].append(third[row])
 
 
-if __name__ == '__main__': #主程序
+def main():
+    # 在下面填日期，食物种类和数量
+    foods = {"奶茶": 10, "炒饭": 2, "炒粉": 3, "鱼粉": 3, "麻辣鸡块面": 5, "油泼面": 9}
+    date = "4.25"
 
-    #在下面填日期，食物种类和数量
-    food_type = ['奶茶', '炒饭', '炒粉', '鱼粉', '麻辣鸡块面', '油泼面']
-    food_num = [10, 2, 3, 3, 5, 9]
-    date = '4.25'
-
-    conn = sqlite3.connect('record.db')
+    conn = sqlite3.connect("record.db")
     cur = conn.cursor()
 
-    sql = f'SELECT * FROM record'
+    sql = f"SELECT * FROM record"
 
     try:
         del_names = cur.execute(sql)
-    except Exception:
-        print(f'生成学生名单失败')
+    except sqlite3.OperationalError:
+        logging.critical(f"生成学生名单失败")
+        raise
 
-    #获取前一天抽到的人，放进另一个list里，和其余同学的list分别打乱并重组。
+    # 获取前一天抽到的人，放进另一个list里，和其余同学的list分别打乱并重组。
     del_names = del_names.fetchall()
     del_names = del_names[::-1]
     if len(del_names) != 0:
         date0 = del_names[0][1]
     else:
-        date0 = '0.00'
+        date0 = "0.00"
     all_names = get_students_list()
     student_list = []
     student_list_2 = []
@@ -128,24 +107,24 @@ if __name__ == '__main__': #主程序
         else:
             student_list_2.append(name)
 
-    mixstudents(student_list)
-    mixstudents(student_list_2)
+    shuffle(student_list)
+    shuffle(student_list_2)
     student_list += student_list_2
 
-    #获取一下食物的种类和份数，学生名单，学生志愿。
+    # 获取一下食物的种类和份数，学生名单，学生志愿。
     w = Wills()
     w.get_students(student_list, student_list_2)
-    w.get_foods(food_type, food_num)
+    w.get_foods(foods)
     w.get_wills(date)
 
-    #从学生列表头开始，根据当前同学的志愿顺序发放餐券，如果三种都发完了就运气不是很好，直到餐券全部发放完毕。
+    # 从学生列表头开始，根据当前同学的志愿顺序发放餐券，如果三种都发完了就运气不是很好，直到餐券全部发放完毕。
     result = []
-    while len(result) < sum(food_num) and student_list != []:
+    while len(result) < sum(foods.values()) and student_list != []:
         stu = student_list.pop(0)
-        for foodname in w.wills[stu]:
-            if w.food[foodname] >= 1:
-                result.append((foodname, stu))
-                w.food[foodname] -= 1
+        for food_name in w.wills[stu]:
+            if w.foods[food_name] >= 1:
+                result.append((food_name, stu))
+                w.foods[food_name] -= 1
                 break
 
     result.sort()
@@ -153,25 +132,35 @@ if __name__ == '__main__': #主程序
     for i in result:
         lucky[i[0]].append(i[1])
 
-    app = QApplication(sys.argv)
+    QApplication(sys.argv)
     wid = QWidget()
 
-    #生成一个结果字符串
-    luckers = ''
-    for key in lucky:
-        luckers += f'分到{key}的学生有：\n{lucky[key]}，共{len(lucky[key])}人\n\n'
-    for key in w.food:
-        luckers += f'{key}剩余：{w.food[key]}份\n'
+    # 生成一个结果字符串
+    luckers = ""
+    for k, v in lucky.items():
+        luckers += f"分到{k}的学生有：\n{v}，共{len(v)}人\n\n"
+    for k, v in w.foods.items():
+        luckers += f"{k}剩余：{v}份\n"
 
-    yes = QMessageBox.question(wid, 'message', f'选取完成，以下是选取结果，是否采用？\n{luckers}', QMessageBox.Yes | QMessageBox.Cancel)
+    yes = QMessageBox.question(
+        wid,
+        "message",
+        f"选取完成，以下是选取结果，是否采用？\n{luckers}",
+        QMessageBox.Yes | QMessageBox.Cancel,
+    )
     if yes == QMessageBox.Yes:
         print(luckers)
 
         for key in lucky:
             for n in lucky[key]:
-                sql = f'INSERT INTO record (name, date) values(\'{n}\', \'{date}\')'
+                sql = f"INSERT INTO record (name, date) values('{n}', '{date}')"
                 try:
                     cur.execute(sql)
                     conn.commit()
-                except Exception:
-                    print(f'数据插入失败：{name} {date}')
+                except sqlite3.OperationalError:
+                    logging.critical(f"数据插入失败：{n} {date}")
+                    raise
+
+
+if __name__ == "__main__":
+    main()
