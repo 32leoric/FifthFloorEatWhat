@@ -8,87 +8,6 @@ from collections import defaultdict
 import xlrd
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget
 
-illegal_char_list = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-    ",",
-    ".",
-    "!",
-    "@",
-    "#",
-    "$",
-    "%",
-    "^",
-    "&",
-    " ",
-    "(",
-    ")",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "0",
-    "+",
-    "-",
-    "*",
-    "/",
-]
-
 
 def get_students_list():
     data = xlrd.open_workbook("students.xlsx")
@@ -108,15 +27,6 @@ def mixstudents(li):
             print("○", end="")
         random.shuffle(li)
     print("完成")
-
-
-def name_process(name):
-    p_name = ""
-    for c in name:
-        if c not in illegal_char_list:
-            p_name += c
-
-    return p_name
 
 
 class Wills:
