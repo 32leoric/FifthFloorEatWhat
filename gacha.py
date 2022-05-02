@@ -80,7 +80,7 @@ class Wills:
 
         for row in range(0, len(names)):
             if dates[row] == date and names[row] in self.students:
-                if self.wills[names[row]] != []：
+                if self.wills[names[row]] != []:
                     self.wills[names[row]] = []
                 self.wills[names[row]].append(first[row])
                 self.wills[names[row]].append(second[row])
