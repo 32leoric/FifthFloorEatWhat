@@ -21,12 +21,10 @@ def get_students_list():
 
 
 class Wills:
-    wills = defaultdict(list)
-    food = defaultdict(int)
-    students = []
-
     def __init__(self):
-        pass
+        self.wills = defaultdict(list)
+        self.food = defaultdict(int)
+        self.students = []
 
     def get_students(self, li, li2):
         for s in li:
