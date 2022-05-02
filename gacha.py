@@ -116,10 +116,10 @@ def main():
     result = []
     while len(result) < sum(foods.values()) and student_list != []:
         stu = student_list.pop(0)
-        for foodname in w.wills[stu]:
-            if w.foods[foodname] >= 1:
-                result.append((foodname, stu))
-                w.foods[foodname] -= 1
+        for food_name in w.wills[stu]:
+            if w.foods[food_name] >= 1:
+                result.append((food_name, stu))
+                w.foods[food_name] -= 1
                 break
 
     result.sort()
