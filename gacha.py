@@ -60,8 +60,7 @@ class Wills:
                 self.wills[names[row]].append(third[row])
 
 
-if __name__ == "__main__":  # 主程序
-
+def main():
     # 在下面填日期，食物种类和数量
     food_type = ["奶茶", "炒饭", "炒粉", "鱼粉", "麻辣鸡块面", "油泼面"]
     food_num = [10, 2, 3, 3, 5, 9]
@@ -153,3 +152,7 @@ if __name__ == "__main__":  # 主程序
                     conn.commit()
                 except Exception:
                     print(f"数据插入失败：{name} {date}")
+
+
+if __name__ == "__main__":
+    main()
