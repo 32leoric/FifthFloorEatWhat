@@ -27,10 +27,7 @@ class Wills:
         self.students = []
 
     def get_students(self, li, li2):
-        for s in li:
-            self.students.append(s)
-        for s in li2:
-            self.students.append(s)
+        self.students = li + li2
 
     def get_foods(self, types, nums):
         for i in range(len(types)):
