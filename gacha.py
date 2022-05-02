@@ -68,8 +68,9 @@ def main():
 
     try:
         del_names = cur.execute(sql)
-    except Exception:
+    except sqlite3.OperationalError:
         print(f"生成学生名单失败")
+        raise
 
     # 获取前一天抽到的人，放进另一个list里，和其余同学的list分别打乱并重组。
     del_names = del_names.fetchall()
@@ -145,8 +146,9 @@ def main():
                 try:
                     cur.execute(sql)
                     conn.commit()
-                except Exception:
+                except sqlite3.OperationalError:
                     print(f"数据插入失败：{name} {date}")
+                    raise
 
 
 if __name__ == "__main__":
