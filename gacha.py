@@ -1,15 +1,12 @@
 # ver 1.0.1
 
-import os
 import random
 import sqlite3
 import sys
-import time
 from collections import defaultdict
 
 import xlrd
-from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget
 
 illegal_char_list = [
     "a",
