@@ -1,9 +1,9 @@
 # ver 1.0.1
 
-import random
 import sqlite3
 import sys
 from collections import defaultdict
+from random import shuffle
 
 import xlrd
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget
@@ -18,15 +18,6 @@ def get_students_list():
             names[i] = str(int(names[i]))
 
     return names
-
-
-def mixstudents(li):
-    print("正在打乱学生名单", end="")
-    for i in range(100000):
-        if i % 10000 == 0:
-            print("○", end="")
-        random.shuffle(li)
-    print("完成")
 
 
 class Wills:
@@ -112,8 +103,8 @@ if __name__ == "__main__":  # 主程序
         else:
             student_list_2.append(name)
 
-    mixstudents(student_list)
-    mixstudents(student_list_2)
+    shuffle(student_list)
+    shuffle(student_list_2)
     student_list += student_list_2
 
     # 获取一下食物的种类和份数，学生名单，学生志愿。
