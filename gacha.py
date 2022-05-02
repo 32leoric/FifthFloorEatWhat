@@ -1,5 +1,6 @@
 # ver 1.0.1
 
+import logging
 import sqlite3
 import sys
 from collections import defaultdict
@@ -7,6 +8,11 @@ from random import shuffle
 
 import xlrd
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 
 def get_students_list():
@@ -69,7 +75,7 @@ def main():
     try:
         del_names = cur.execute(sql)
     except sqlite3.OperationalError:
-        print(f"生成学生名单失败")
+        logging.critical(f"生成学生名单失败")
         raise
 
     # 获取前一天抽到的人，放进另一个list里，和其余同学的list分别打乱并重组。
@@ -147,7 +153,7 @@ def main():
                     cur.execute(sql)
                     conn.commit()
                 except sqlite3.OperationalError:
-                    print(f"数据插入失败：{name} {date}")
+                    logging.critical(f"数据插入失败：{name} {date}")
                     raise
 
 
