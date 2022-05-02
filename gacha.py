@@ -127,7 +127,7 @@ def main():
     for i in result:
         lucky[i[0]].append(i[1])
 
-    app = QApplication(sys.argv)
+    QApplication(sys.argv)
     wid = QWidget()
 
     # 生成一个结果字符串
