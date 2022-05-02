@@ -23,15 +23,14 @@ def get_students_list():
 class Wills:
     def __init__(self):
         self.wills = defaultdict(list)
-        self.food = defaultdict(int)
+        self.foods = defaultdict(int)
         self.students = []
 
     def get_students(self, li, li2):
         self.students = li + li2
 
-    def get_foods(self, types, nums):
-        for i in range(len(types)):
-            self.food[types[i]] = nums[i]
+    def get_foods(self, foods: dict):
+        self.foods |= foods
 
     # 获得志愿时，检查日期，学生是否在学生列表，以及是否多次填写。杜绝了多次填写，改名等手段
     def get_wills(self, date):
@@ -59,8 +58,7 @@ class Wills:
 
 def main():
     # 在下面填日期，食物种类和数量
-    food_type = ["奶茶", "炒饭", "炒粉", "鱼粉", "麻辣鸡块面", "油泼面"]
-    food_num = [10, 2, 3, 3, 5, 9]
+    foods = {"奶茶": 10, "炒饭": 2, "炒粉": 3, "鱼粉": 3, "麻辣鸡块面": 5, "油泼面": 9}
     date = "4.25"
 
     conn = sqlite3.connect("record.db")
@@ -104,17 +102,17 @@ def main():
     # 获取一下食物的种类和份数，学生名单，学生志愿。
     w = Wills()
     w.get_students(student_list, student_list_2)
-    w.get_foods(food_type, food_num)
+    w.get_foods(foods)
     w.get_wills(date)
 
     # 从学生列表头开始，根据当前同学的志愿顺序发放餐券，如果三种都发完了就运气不是很好，直到餐券全部发放完毕。
     result = []
-    while len(result) < sum(food_num) and student_list != []:
+    while len(result) < sum(foods.values()) and student_list != []:
         stu = student_list.pop(0)
         for foodname in w.wills[stu]:
-            if w.food[foodname] >= 1:
+            if w.foods[foodname] >= 1:
                 result.append((foodname, stu))
-                w.food[foodname] -= 1
+                w.foods[foodname] -= 1
                 break
 
     result.sort()
@@ -129,8 +127,8 @@ def main():
     luckers = ""
     for key in lucky:
         luckers += f"分到{key}的学生有：\n{lucky[key]}，共{len(lucky[key])}人\n\n"
-    for key in w.food:
-        luckers += f"{key}剩余：{w.food[key]}份\n"
+    for key in w.foods:
+        luckers += f"{key}剩余：{w.foods[key]}份\n"
 
     yes = QMessageBox.question(
         wid,
