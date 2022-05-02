@@ -1,4 +1,9 @@
-# ver 1.0.1
+"""
+    Author: 32yy, CCXXXI
+    License: MIT
+    Version: 1.1.0
+    Description: ECNU 中北五舍五楼餐券抽取脚本
+"""
 
 import logging
 import sqlite3
