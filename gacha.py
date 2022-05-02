@@ -153,7 +153,7 @@ def main():
                     cur.execute(sql)
                     conn.commit()
                 except sqlite3.OperationalError:
-                    logging.critical(f"数据插入失败：{name} {date}")
+                    logging.critical(f"数据插入失败：{n} {date}")
                     raise
 
 
