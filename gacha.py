@@ -11,8 +11,12 @@ illegal_char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
                      '9', '0', '+', '-', '*', '/']
 
 
-def get_students_list():
-    data = xlrd.open_workbook("students.xlsx")
+def get_students_list(student_path):
+    try:
+        data = xlrd.open_workbook(student_path)
+    except Exception:
+        print('无法读取学生数据')
+        return
     table = data.sheet_by_name('Sheet1')
     names = table.col_values(0)
     for i, name in enumerate(names):
@@ -55,8 +59,13 @@ class Wills:
             self.food[types[i]] = nums[i]
 
     # 获得志愿时，检查日期，学生是否在学生列表，以及是否多次填写。杜绝了多次填写，改名等手段
-    def get_wills(self, date):
-        data = xlrd.open_workbook("food.xlsx")
+    def get_wills(self, date, willpath):
+        try:
+            data = xlrd.open_workbook(willpath)
+        except Exception:
+            print('无法读取学生志愿数据')
+            return
+
         table = data.sheet_by_name('Sheet1')
 
         dates = table.col_values(6)

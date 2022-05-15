@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget
 from gacha import *
 
 
-def select(food_type, food_num, date):
+def select(food_type, food_num, date, stu_path, wi_path):
     conn = sqlite3.connect('record.db')
     cur = conn.cursor()
 
@@ -25,7 +25,7 @@ def select(food_type, food_num, date):
         date0 = del_names[0][1]
     else:
         date0 = '0.00'
-    all_names = get_students_list()
+    all_names = get_students_list(student_path=stu_path)
     student_list = []
     student_list_2 = []
 
@@ -49,7 +49,7 @@ def select(food_type, food_num, date):
     w = Wills()
     w.get_students(student_list)
     w.get_foods(food_type, food_num)
-    w.get_wills(date)
+    w.get_wills(date, willpath=wi_path)
 
     # 从学生列表头开始，根据当前同学的志愿顺序发放餐券，如果三种都发完了就运气不是很好，直到餐券全部发放完毕。
     result = []
